@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web & Mobile Development Learning Guide</title>
+<style>
+:root{
+ --green:#04AA6D;--dark:#052e22;--pup:#7a0012;--gold:#f7c948;--bg:#f7f8fa;
+ --text:#18212b;--muted:#5b6572;--card:#fff;--line:#dde3ea;--blue:#0b64c0;
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.topbar{height:58px;background:var(--dark);color:#fff;display:flex;align-items:center;gap:14px;padding:0 18px;position:sticky;top:0;z-index:20;box-shadow:0 3px 14px #0003}
+.logo{font-weight:900;white-space:nowrap}.logo b{color:var(--green)}
+.topbar input{flex:1;max-width:680px;padding:10px 13px;border:0;border-radius:8px;font-size:15px}
+button{border:0;border-radius:7px;background:var(--green);color:#fff;font-weight:700;padding:10px 14px;cursor:pointer}
+button.secondary{background:#253041}.menuBtn{font-size:18px;background:#073b2c}
+.layout{display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - 58px)}
+.sidebar{background:#fff;border-right:1px solid var(--line);height:calc(100vh - 58px);overflow:auto;position:sticky;top:58px;padding:14px}
+.sidebar h3{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--dark);padding:7px;border-bottom:1px solid var(--line)}
+.group{border-bottom:1px solid var(--line);padding:6px 0}.groupHead{width:100%;display:flex;justify-content:space-between;text-align:left;background:transparent;color:var(--text);padding:10px}.items{display:none}.group.open .items{display:block}
+.items button{width:100%;text-align:left;background:transparent;color:var(--text);padding:9px 12px}.items button:hover,.items button.active{background:#e8f7f0;color:#006b45}
+.items span{display:block;color:var(--muted);font-size:10px;text-transform:uppercase}
+.main{padding:28px;max-width:1180px;width:100%;margin:auto}.page{display:none}.page.active{display:block}
+.pageHead{display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:22px}.pageHead h1{font-size:38px;line-height:1.1;margin:0;color:#0b1f17}
+.eyebrow{color:var(--green);font-weight:900;text-transform:uppercase;letter-spacing:.1em;margin:0 0 6px}
+.hero{background:linear-gradient(135deg,#064e3b,#04AA6D);color:#fff;border-radius:18px;padding:34px;display:grid;grid-template-columns:1.5fr .8fr;gap:22px}
+.hero h1{font-size:46px;line-height:1;margin:8px 0}.score{background:#ffffff20;border:1px solid #ffffff55;border-radius:14px;padding:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:18px 0}
+.card,.qa,.note,.tip,.warning,.practice{border-radius:12px;padding:16px;margin:14px 0}.card,.qa{background:#fff;border:1px solid var(--line)}
+.note{background:#fff8cf;border-left:6px solid var(--gold)}.tip{background:#e8f7f0;border-left:6px solid var(--green)}.warning{background:#fff0f0;border-left:6px solid #e23c3c}
+.codebox{background:#e9ecef;border-radius:9px;padding:16px;margin:14px 0}.codebar{display:flex;justify-content:space-between;align-items:center;font-weight:800;margin-bottom:8px}
+pre{margin:0;background:#fff;border-left:5px solid var(--green);padding:14px;overflow:auto}code{font-family:"Courier New",monospace;color:#063970}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fff;margin:14px 0}table{width:100%;border-collapse:collapse;min-width:650px}th{background:#007a4e;color:#fff;text-align:left}th,td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.flashgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}.flash{min-height:135px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;cursor:pointer;display:flex;align-items:flex-start}.flash .question{font-size:17px;line-height:1.45}.flash .answer{font-size:16px}.flash .answer{display:none;color:#006b45}.flash.open .answer{display:block}.flash.open .question{display:none}
+.quizItem{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin:12px 0}.quizItem label{display:block;background:#f6f7f8;padding:8px;border-radius:8px;margin:7px 0}
+.result{font-size:20px;font-weight:900;margin:15px 0}
+.checks li{margin:7px 0}.tag{display:inline-block;padding:3px 8px;border-radius:20px;background:#eee;font-size:12px;font-weight:800}
+.layout.collapsed{grid-template-columns:0 1fr}.layout.collapsed .sidebar{transform:translateX(-105%);padding:0;border:0;overflow:hidden}
+.dark{--bg:#0b1220;--text:#e5e7eb;--card:#111827;--line:#263043;--muted:#aab3c2}.dark .sidebar,.dark .card,.dark .qa,.dark .tablewrap,.dark .quizItem,.dark .flash{background:#111827;color:#e5e7eb}.dark .pageHead h1{color:#e5e7eb}.dark pre{background:#0b1220}.dark .codebox{background:#1f2937}.dark code{color:#93c5fd}.dark .items button,.dark .groupHead{color:#e5e7eb}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{position:fixed;left:0;top:58px;bottom:0;width:300px;height:auto;z-index:30;box-shadow:0 20px 40px #0005}.layout.collapsed{grid-template-columns:1fr}.main{padding:16px}.hero{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}.pageHead h1{font-size:30px}}
+@media print{.topbar,.sidebar{display:none}.layout{display:block}.main{max-width:none}.page{display:block;break-after:page}}
+</style>
+</head>
+<body>
+<header class="topbar">
+<button class="menuBtn" id="menu">☰</button>
+<div class="logo"><b>WEB DEV</b> Reviewer</div>
+<input id="search" placeholder="Search HTML, CSS, JavaScript, AJAX, JSON, PHP, HTTP...">
+<button id="dark">Dark</button>
+</header>
+
+<div class="layout" id="layout">
+<aside class="sidebar">
+<h3>Course Menu</h3>
+
+<div class="group open"><button class="groupHead">🏠 Start Here <span>▾</span></button><div class="items">
+<button data-page="home"><span>Start Here</span>Web Development Learning Guide</button>
+<button data-page="study-plan"><span>Assessment</span>30-Minute Quiz Preparation</button>
+</div></div>
+
+<div class="group open"><button class="groupHead">🧱 HTML <span>▾</span></button><div class="items">
+<button data-page="html-foundations"><span>HTML5</span>HTML Foundations</button>
+<button data-page="html-deep"><span>Deep Review</span>HTML Concepts & Syntax</button>
+<button data-page="html-activity1"><span>Activity 1</span>Formatting, Tables & Media</button>
+<button data-page="html-activity2"><span>Activity 2</span>Forms & Inputs</button>
+</div></div>
+
+<div class="group"><button class="groupHead">🎨 CSS <span>▸</span></button><div class="items">
+<button data-page="css-basics"><span>CSS</span>CSS Foundations</button>
+<button data-page="css-properties"><span>Reference</span>CSS Properties & Values</button>
+<button data-page="responsive"><span>Responsive</span>Responsive Web Design</button>
+</div></div>
+
+<div class="group"><button class="groupHead">⚙️ JavaScript & Data <span>▸</span></button><div class="items">
+<button data-page="javascript"><span>JavaScript</span>JavaScript Essentials</button>
+<button data-page="json"><span>JSON</span>JSON Essentials</button>
+<button data-page="ajax"><span>AJAX</span>AJAX Concept</button>
+</div></div>
+
+<div class="group"><button class="groupHead">🌐 Web & HTTP <span>▸</span></button><div class="items">
+<button data-page="web-intro"><span>Web</span>Introduction to Web Development</button>
+<button data-page="http"><span>HTTP</span>HTTP Status Codes</button>
+<button data-page="security"><span>Security</span>Internet Security Basics</button>
+</div></div>
+
+<div class="group"><button class="groupHead">🗄️ PHP & MySQL <span>▸</span></button><div class="items">
+<button data-page="php"><span>Server Side</span>PHP & MySQL Overview</button>
+<button data-page="session"><span>PHP</span>Sessions Overview</button>
+</div></div>
+
+<div class="group"><button class="groupHead">📝 Review Tools <span>▸</span></button><div class="items">
+<button data-page="coding"><span>Hands-on</span>Coding Practice</button>
+<button data-page="flashcards"><span>Recall</span>Flashcards</button>
+<button data-page="quiz"><span>Practice</span>Mock Quiz</button>
+<button data-page="cheatsheet"><span>Fast Review</span>Cheat Sheet</button>
+</div></div>
+</aside>
+
+<main class="main">
+<section class="page active" id="home" data-search="web mobile development html css javascript ajax json php mysql http security responsive">
+<div class="pageHead"><div><p class="eyebrow">Start Here</p><h1>Web & Mobile Development Learning Guide</h1><p>Study the code, understand what it does, then practice from memory.</p></div><button onclick="window.print()">Print</button></div>
+<div class="hero"><div><p class="eyebrow">ASSESSMENT PREPARATION</p><h1>Understand → Execute → Recall</h1><p>This reviewer follows the learning-guide style of your ADAMS reviewer and includes the topics visible in your Web & Mobile Development course folder.</p><button onclick="go('html-foundations')">Start with HTML</button></div><div class="score"><b>Study Formula</b><p><span class="tag">Definition</span> + <span class="tag">Syntax</span> + <span class="tag">Browser Result</span></p><p>Do not only memorize a tag. Know what it means, how to type it, and what the browser will display.</p></div></div>
+<div class="grid3"><div class="card"><b>1. Learn</b><p>Read the concept in simple language.</p></div><div class="card"><b>2. Execute</b><p>Type examples in VS Code and refresh the browser.</p></div><div class="card"><b>3. Test</b><p>Use flashcards and mock questions without looking at notes.</p></div></div>
+<div class="note"><b>Coverage note:</b> The course-folder screenshot lists HTML5, CSS, CSS properties, responsive design, JavaScript, JSON, AJAX, HTTP status codes, Internet Security, PHP/MySQL, PHP sessions, and introductory web-development materials. Only your HTML Activities 1 and 2 have been supplied in detail, so those sections mirror our actual work. The later-topic pages below are foundational review sections; upload the lecture PDFs if you want them rewritten to match your instructor's exact material.</div>
+</section>
+
+<section class="page" id="study-plan" data-search="assessment quiz 30 minute study plan">
+<div class="pageHead"><div><p class="eyebrow">Assessment</p><h1>30-Minute Quiz Preparation</h1></div></div>
+<div class="tip"><b>Before the assessment:</b> practice recognition first, then code writing. A timed quiz often rewards fast identification of tags, attributes, syntax, and browser behavior.</div>
+<ol class="checks"><li>Know the basic HTML document structure without notes.</li><li>Recognize Activity 1 tags: formatting, tables, image, video.</li><li>Recognize Activity 2 form controls and attributes.</li><li>Know the difference between HTML structure, CSS presentation, and JavaScript behavior.</li><li>Review HTTP and client/server basics.</li><li>Complete the mock quiz and aim for 100% twice.</li></ol>
+</section>
+
+<section class="page" id="html-foundations" data-search="html html5 doctype head body title element tag attribute">
+<div class="pageHead"><div><p class="eyebrow">HTML5</p><h1>HTML Foundations</h1></div></div>
+<div class="qa"><h3>What is HTML?</h3><p>HTML stands for HyperText Markup Language. It gives a webpage its structure and content.</p></div>
+<div class="codebox"><div class="codebar">Basic document <button class="copy">Copy</button></div><pre>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;My Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Hello World&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div>
+<div class="tablewrap"><table><tr><th>Part</th><th>Meaning</th></tr><tr><td>&lt;!DOCTYPE html&gt;</td><td>Declares HTML5.</td></tr><tr><td>&lt;html&gt;</td><td>Root element.</td></tr><tr><td>&lt;head&gt;</td><td>Page metadata.</td></tr><tr><td>&lt;title&gt;</td><td>Browser-tab title.</td></tr><tr><td>&lt;body&gt;</td><td>Visible page content.</td></tr></table></div>
+<div class="practice"><b>Execute it:</b> create <code>practice.html</code> in VS Code, type the structure, save with ⌘S, open it in a browser, change the heading, save, then refresh.</div>
+</section>
+
+
+<section class="page" id="html-deep" data-search="html deep reviewer elements attributes headings paragraph lists links semantic entities comments block inline">
+<div class="pageHead"><div><p class="eyebrow">HTML Deep Review</p><h1>HTML Concepts You Should Know</h1><p>A larger study section for recognition, syntax, browser behavior, and coding practice.</p></div></div>
+
+<h2>1. Elements, Tags, Content & Attributes</h2>
+<div class="codebox"><pre>&lt;p class="note"&gt;Hello&lt;/p&gt;</pre></div>
+<div class="tablewrap"><table>
+<tr><th>Part</th><th>Example</th><th>Meaning</th></tr>
+<tr><td>Opening tag</td><td>&lt;p class="note"&gt;</td><td>Starts the element.</td></tr>
+<tr><td>Attribute</td><td>class="note"</td><td>Adds information/configuration to the element.</td></tr>
+<tr><td>Content</td><td>Hello</td><td>The text inside the element.</td></tr>
+<tr><td>Closing tag</td><td>&lt;/p&gt;</td><td>Ends the element.</td></tr>
+</table></div>
+
+<h2>2. Common Text & Structure Tags</h2>
+<div class="tablewrap"><table>
+<tr><th>Tag</th><th>Purpose</th><th>Example</th></tr>
+<tr><td>&lt;h1&gt;–&lt;h6&gt;</td><td>Heading levels</td><td>&lt;h1&gt;Main Heading&lt;/h1&gt;</td></tr>
+<tr><td>&lt;p&gt;</td><td>Paragraph</td><td>&lt;p&gt;Hello&lt;/p&gt;</td></tr>
+<tr><td>&lt;br&gt;</td><td>Line break</td><td>Line 1&lt;br&gt;Line 2</td></tr>
+<tr><td>&lt;hr&gt;</td><td>Thematic break</td><td>&lt;hr&gt;</td></tr>
+<tr><td>&lt;b&gt;</td><td>Stylistically bold text</td><td>&lt;b&gt;Bold&lt;/b&gt;</td></tr>
+<tr><td>&lt;i&gt;</td><td>Italicized/offset text</td><td>&lt;i&gt;Italic&lt;/i&gt;</td></tr>
+<tr><td>&lt;u&gt;</td><td>Underlined/annotated text</td><td>&lt;u&gt;Text&lt;/u&gt;</td></tr>
+<tr><td>&lt;sub&gt;</td><td>Subscript</td><td>H&lt;sub&gt;2&lt;/sub&gt;O</td></tr>
+<tr><td>&lt;sup&gt;</td><td>Superscript</td><td>x&lt;sup&gt;2&lt;/sup&gt;</td></tr>
+</table></div>
+
+<h2>3. Links & Lists</h2>
+<div class="codebox"><pre>&lt;a href="https://example.com"&gt;Visit Site&lt;/a&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;HTML&lt;/li&gt;
+  &lt;li&gt;CSS&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Open VS Code&lt;/li&gt;
+  &lt;li&gt;Create an HTML file&lt;/li&gt;
+&lt;/ol&gt;</pre></div>
+<p><code>&lt;a&gt;</code> creates a hyperlink and <code>href</code> specifies its destination. <code>&lt;ul&gt;</code> is an unordered list, <code>&lt;ol&gt;</code> an ordered list, and <code>&lt;li&gt;</code> a list item.</p>
+
+<h2>4. Tables — Understand the Nesting</h2>
+<div class="codebox"><pre>&lt;table border="1"&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Day&lt;/th&gt;
+      &lt;th&gt;Time&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Monday&lt;/td&gt;
+      &lt;td&gt;7:00 PM&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;</pre></div>
+<div class="tip"><b>Read from outside to inside:</b> table → table section → row → cell. <code>&lt;th&gt;</code> is a header cell; <code>&lt;td&gt;</code> is a data cell.</div>
+
+<h2>5. Images & File Paths</h2>
+<div class="codebox"><pre>&lt;img src="cat.jpg" alt="A cat" width="300"&gt;</pre></div>
+<p>If <code>cat.jpg</code> is in the same folder as the HTML file, the simple relative path above works. If the filename or path is wrong, the browser cannot load the image. <code>alt</code> provides a text alternative.</p>
+
+<h2>6. Video</h2>
+<div class="codebox"><pre>&lt;video width="400" controls&gt;
+  &lt;source src="aral loop.mp4" type="video/mp4"&gt;
+  Your browser does not support the video tag.
+&lt;/video&gt;</pre></div>
+<p>The <code>controls</code> Boolean attribute displays browser playback controls. The nested <code>&lt;source&gt;</code> identifies a media resource and its MIME type.</p>
+
+<h2>7. Forms — The Big Picture</h2>
+<p>A form contains controls that collect user input. Our Activity 2 focused on HTML controls and browser validation; it did not include a server endpoint that stores the submitted data.</p>
+<div class="codebox"><pre>&lt;form&gt;
+  &lt;label for="fullname"&gt;Full Name:&lt;/label&gt;
+  &lt;input type="text" id="fullname" name="fullname" required&gt;
+&lt;/form&gt;</pre></div>
+
+<h2>8. Important Form Attributes</h2>
+<div class="tablewrap"><table>
+<tr><th>Attribute</th><th>What to remember</th></tr>
+<tr><td>type</td><td>Determines the kind of input control.</td></tr>
+<tr><td>id</td><td>Uniquely identifies an element; a label's for value can target it.</td></tr>
+<tr><td>for</td><td>On a label, should match the associated control's id.</td></tr>
+<tr><td>name</td><td>Names the form field in submitted form data.</td></tr>
+<tr><td>value</td><td>Defines the value associated with a control/option.</td></tr>
+<tr><td>placeholder</td><td>Shows hint/example text inside certain controls.</td></tr>
+<tr><td>required</td><td>Participates in browser validation and makes the control mandatory.</td></tr>
+<tr><td>min / max</td><td>Set lower/upper constraints for applicable controls such as number.</td></tr>
+<tr><td>multiple</td><td>Allows multiple choices in an applicable select control.</td></tr>
+</table></div>
+
+<h2>9. Radio vs Checkbox</h2>
+<div class="codebox"><pre>&lt;input type="radio" id="first" name="year" value="1st"&gt;
+&lt;label for="first"&gt;1st Year&lt;/label&gt;
+
+&lt;input type="checkbox" id="htmlSkill" name="skills" value="HTML"&gt;
+&lt;label for="htmlSkill"&gt;HTML&lt;/label&gt;</pre></div>
+<p>Radio buttons that share a <code>name</code> form a single-choice group. Checkboxes are independent controls, so several may be selected.</p>
+
+<h2>10. Select, Option & Multiple</h2>
+<div class="codebox"><pre>&lt;select id="section" name="section"&gt;
+  &lt;option value=""&gt;-- Select section --&lt;/option&gt;
+  &lt;option value="A"&gt;Section A&lt;/option&gt;
+&lt;/select&gt;
+
+&lt;select id="hobbies" name="hobbies" multiple&gt;
+  &lt;option value="reading"&gt;Reading&lt;/option&gt;
+  &lt;option value="gaming"&gt;Gaming&lt;/option&gt;
+&lt;/select&gt;</pre></div>
+
+<h2>11. Textarea, File, Submit & Reset</h2>
+<div class="codebox"><pre>&lt;textarea id="reason" name="reason" rows="4" cols="40"&gt;&lt;/textarea&gt;
+&lt;input type="file" id="studentfile" name="studentfile"&gt;
+&lt;input type="submit" value="Submit"&gt;
+&lt;input type="reset" value="Reset"&gt;</pre></div>
+
+<h2>12. Common Errors to Spot</h2>
+<div class="warning"><b>Wrong:</b> <code>&lt;thread&gt;</code> when you mean <code>&lt;thead&gt;</code>.</div>
+<div class="warning"><b>Label mismatch:</b> <code>for="email"</code> will not explicitly connect to a control whose <code>id</code> is <code>studentemail</code>.</div>
+<div class="warning"><b>Duplicate IDs:</b> IDs should be unique within one HTML document.</div>
+<div class="warning"><b>Wrong media path:</b> a typo in <code>src</code> prevents the resource from loading.</div>
+</section>
+
+<section class="page" id="html-activity1" data-search="activity 1 bold italic underline subscript superscript table thead tbody tr th td image img video source">
+<div class="pageHead"><div><p class="eyebrow">Activity 1</p><h1>Formatting, Tables & Media</h1></div></div>
+<h2>Text Formatting</h2><div class="codebox"><pre>&lt;b&gt;Bold&lt;/b&gt;
+&lt;i&gt;Italic&lt;/i&gt;
+&lt;u&gt;Underline&lt;/u&gt;
+H&lt;sub&gt;2&lt;/sub&gt;O
+x&lt;sup&gt;2&lt;/sup&gt;</pre></div>
+<h2>Table</h2><div class="codebox"><pre>&lt;table border="1"&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;&lt;th&gt;Day&lt;/th&gt;&lt;th&gt;Time&lt;/th&gt;&lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;&lt;td&gt;Monday&lt;/td&gt;&lt;td&gt;7:00 PM&lt;/td&gt;&lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;</pre></div>
+<div class="tip"><b>Memory:</b> TR = table row, TH = table header cell, TD = table data cell.</div>
+<h2>Image</h2><div class="codebox"><pre>&lt;img src="cat.jpg" alt="A cat" width="300"&gt;</pre></div>
+<h2>Video</h2><div class="codebox"><pre>&lt;video width="400" controls&gt;
+  &lt;source src="aral loop.mp4" type="video/mp4"&gt;
+&lt;/video&gt;</pre></div>
+</section>
+
+<section class="page" id="html-activity2" data-search="activity 2 forms label input text email password number tel date radio checkbox select option multiple textarea file submit reset required placeholder id name value">
+<div class="pageHead"><div><p class="eyebrow">Activity 2</p><h1>Forms & Inputs</h1></div></div>
+<div class="codebox"><div class="codebar">Label + input <button class="copy">Copy</button></div><pre>&lt;label for="email"&gt;Email:&lt;/label&gt;
+&lt;input type="email" id="email" name="email"
+       placeholder="e.g. student@email.com" required&gt;</pre></div>
+<div class="tip"><b>Connection rule:</b> the label's <code>for</code> value should match the input's <code>id</code>.</div>
+<div class="tablewrap"><table><tr><th>Input</th><th>Purpose</th></tr><tr><td>text</td><td>General text</td></tr><tr><td>email</td><td>Email address</td></tr><tr><td>password</td><td>Obscured characters</td></tr><tr><td>number</td><td>Numeric input</td></tr><tr><td>tel</td><td>Telephone input</td></tr><tr><td>date</td><td>Date input</td></tr><tr><td>radio</td><td>One choice from a group</td></tr><tr><td>checkbox</td><td>Independent/multiple choices</td></tr><tr><td>file</td><td>Choose a file</td></tr><tr><td>submit</td><td>Submit form</td></tr><tr><td>reset</td><td>Restore initial values</td></tr></table></div>
+<h2>Select</h2><div class="codebox"><pre>&lt;select id="course" name="course"&gt;
+  &lt;option value=""&gt;-- Select course --&lt;/option&gt;
+  &lt;option value="BSIT"&gt;BS Information Technology&lt;/option&gt;
+&lt;/select&gt;</pre></div>
+<h2>Multiple select</h2><div class="codebox"><pre>&lt;select id="hobbies" name="hobbies" multiple&gt;
+  &lt;option value="reading"&gt;Reading&lt;/option&gt;
+  &lt;option value="gaming"&gt;Gaming&lt;/option&gt;
+&lt;/select&gt;</pre></div>
+<h2>Textarea</h2><div class="codebox"><pre>&lt;textarea id="reason" name="reason" rows="4" cols="40"&gt;&lt;/textarea&gt;</pre></div>
+</section>
+
+<section class="page" id="css-basics" data-search="css cascading style sheets selector property value inline internal external">
+<div class="pageHead"><div><p class="eyebrow">CSS</p><h1>CSS Foundations</h1></div></div>
+<div class="qa"><h3>What is CSS?</h3><p>CSS (Cascading Style Sheets) controls presentation such as color, spacing, fonts, borders, and layout.</p></div>
+<div class="codebox"><pre>p {
+  color: blue;
+  font-size: 18px;
+}</pre></div>
+<p><b>Selector:</b> <code>p</code> • <b>Property:</b> <code>color</code> • <b>Value:</b> <code>blue</code>.</p>
+<div class="tablewrap"><table><tr><th>Method</th><th>Example</th></tr><tr><td>Inline</td><td>&lt;p style="color:red;"&gt;</td></tr><tr><td>Internal</td><td>&lt;style&gt; rules inside the HTML document</td></tr><tr><td>External</td><td>&lt;link rel="stylesheet" href="style.css"&gt;</td></tr></table></div>
+</section>
+
+<section class="page" id="css-properties" data-search="css properties color background font margin padding border width height display">
+<div class="pageHead"><div><p class="eyebrow">CSS Reference</p><h1>Common CSS Properties</h1></div></div>
+<div class="tablewrap"><table><tr><th>Property</th><th>Purpose</th><th>Example</th></tr><tr><td>color</td><td>Text color</td><td>color: red;</td></tr><tr><td>background-color</td><td>Background color</td><td>background-color: white;</td></tr><tr><td>font-size</td><td>Text size</td><td>font-size: 18px;</td></tr><tr><td>margin</td><td>Space outside an element</td><td>margin: 20px;</td></tr><tr><td>padding</td><td>Space inside an element</td><td>padding: 10px;</td></tr><tr><td>border</td><td>Element border</td><td>border: 1px solid black;</td></tr><tr><td>width</td><td>Width</td><td>width: 300px;</td></tr><tr><td>display</td><td>Layout/display behavior</td><td>display: flex;</td></tr></table></div>
+</section>
+
+<section class="page" id="responsive" data-search="responsive mobile viewport media query flexible layout">
+<div class="pageHead"><div><p class="eyebrow">Responsive Design</p><h1>Responsive Web Design</h1></div></div>
+<p>Responsive design adapts a page to different screen sizes.</p>
+<div class="codebox"><pre>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+
+@media (max-width: 600px) {
+  .container {
+    width: 100%;
+  }
+}</pre></div>
+</section>
+
+<section class="page" id="javascript" data-search="javascript variable let const function event dom">
+<div class="pageHead"><div><p class="eyebrow">JavaScript</p><h1>JavaScript Essentials</h1></div></div>
+<p>JavaScript adds behavior and interactivity to webpages.</p>
+<div class="codebox"><pre>&lt;button id="helloBtn"&gt;Click Me&lt;/button&gt;
+
+&lt;script&gt;
+const button = document.getElementById("helloBtn");
+
+button.addEventListener("click", function () {
+    alert("Hello!");
+});
+&lt;/script&gt;</pre></div>
+<div class="tip"><b>Think of the roles:</b> HTML = structure, CSS = presentation, JavaScript = behavior.</div>
+</section>
+
+<section class="page" id="json" data-search="json object key value array javascript object notation">
+<div class="pageHead"><div><p class="eyebrow">JSON</p><h1>JSON Essentials</h1></div></div>
+<p>JSON is a text format commonly used to represent and exchange structured data.</p>
+<div class="codebox"><pre>{
+  "name": "Juan",
+  "course": "BSIT",
+  "skills": ["HTML", "CSS"]
+}</pre></div>
+<div class="note">JSON uses key/value pairs. In valid JSON, property names and string values use double quotes.</div>
+</section>
+
+<section class="page" id="ajax" data-search="ajax asynchronous javascript xml request server fetch">
+<div class="pageHead"><div><p class="eyebrow">AJAX</p><h1>AJAX Concept</h1></div></div>
+<p>AJAX describes techniques for requesting data from a server and updating a webpage without requiring a traditional full-page reload.</p>
+<div class="codebox"><pre>fetch("data.json")
+  .then(response =&gt; response.json())
+  .then(data =&gt; console.log(data));</pre></div>
+<div class="warning"><b>Foundation example:</b> your actual AJAX lecture PDF has not been uploaded here, so this page is not a transcription of that lecture.</div>
+</section>
+
+<section class="page" id="web-intro" data-search="web development client server browser frontend backend url">
+<div class="pageHead"><div><p class="eyebrow">Web Development</p><h1>Introduction to Web Development</h1></div></div>
+<div class="grid3"><div class="card"><b>Client</b><p>The browser/device requesting and displaying web resources.</p></div><div class="card"><b>Server</b><p>A system that responds to requests and provides resources/services.</p></div><div class="card"><b>Frontend</b><p>The user-facing part commonly built with HTML, CSS, and JavaScript.</p></div></div>
+</section>
+
+<section class="page" id="http" data-search="http status codes 200 301 400 401 403 404 500">
+<div class="pageHead"><div><p class="eyebrow">HTTP</p><h1>HTTP Status Codes</h1></div></div>
+<div class="tablewrap"><table><tr><th>Range</th><th>Meaning</th><th>Examples</th></tr><tr><td>1xx</td><td>Informational</td><td>100 Continue</td></tr><tr><td>2xx</td><td>Success</td><td>200 OK</td></tr><tr><td>3xx</td><td>Redirection</td><td>301 Moved Permanently</td></tr><tr><td>4xx</td><td>Client error</td><td>400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found</td></tr><tr><td>5xx</td><td>Server error</td><td>500 Internal Server Error</td></tr></table></div>
+</section>
+
+<section class="page" id="security" data-search="internet security cryptography confidentiality integrity authentication encryption hashing https">
+<div class="pageHead"><div><p class="eyebrow">Security</p><h1>Internet Security Basics</h1></div></div>
+<div class="grid3"><div class="card"><b>Confidentiality</b><p>Protect information from unauthorized disclosure.</p></div><div class="card"><b>Integrity</b><p>Protect information from unauthorized modification.</p></div><div class="card"><b>Availability</b><p>Keep systems and information accessible when needed.</p></div></div>
+<p>Encryption transforms data using a key so authorized parties can recover it. Hashing produces a fixed-size digest and is generally designed as a one-way operation.</p>
+</section>
+
+<section class="page" id="php" data-search="php mysql server side database echo variable">
+<div class="pageHead"><div><p class="eyebrow">PHP & MySQL</p><h1>PHP & MySQL Overview</h1></div></div>
+<p>PHP is commonly used for server-side web programming. MySQL is a relational database management system. They can be used together so a server-side PHP program reads or changes database data.</p>
+<div class="codebox"><pre>&lt;?php
+$name = "Juan";
+echo "Hello " . $name;
+?&gt;</pre></div>
+</section>
+
+<section class="page" id="session" data-search="php session session_start session variable">
+<div class="pageHead"><div><p class="eyebrow">PHP</p><h1>Sessions Overview</h1></div></div>
+<p>A PHP session can preserve server-side data associated with a user's browsing session across requests.</p>
+<div class="codebox"><pre>&lt;?php
+session_start();
+$_SESSION["username"] = "Juan";
+?&gt;</pre></div>
+</section>
+
+
+<section class="page" id="coding" data-search="coding practice html exercises build fix complete code">
+<div class="pageHead"><div><p class="eyebrow">Hands-on</p><h1>Coding Practice</h1><p>Type these in VS Code. Use the solution only after attempting the task.</p></div></div>
+<div id="codingbox"></div>
+</section>
+
+<section class="page" id="flashcards" data-search="flashcards review recall">
+<div class="pageHead"><div><p class="eyebrow">Recall</p><h1>Flashcards</h1><p>124 cards. Select a question card to reveal the answer.</p></div></div>
+<div class="flashgrid" id="flashgrid"></div>
+</section>
+
+<section class="page" id="quiz" data-search="quiz mock assessment practice">
+<div class="pageHead"><div><p class="eyebrow">Practice</p><h1>100-Question Mock Quiz</h1><p>100 questions covering the reviewer. Aim for mastery, then repeat the HTML-heavy questions before your assessment.</p></div></div>
+<div id="quizbox"></div><button id="grade">Grade Quiz</button> <button class="secondary" id="reset">Reset</button><div class="result" id="result"></div>
+</section>
+
+<section class="page" id="cheatsheet" data-search="cheat sheet quick reference html css javascript json ajax http php">
+<div class="pageHead"><div><p class="eyebrow">Fast Review</p><h1>Cheat Sheet</h1></div></div>
+<div class="tablewrap"><table><tr><th>Topic</th><th>Remember</th></tr><tr><td>HTML</td><td>Structure/content</td></tr><tr><td>CSS</td><td>Presentation/style</td></tr><tr><td>JavaScript</td><td>Behavior/interactivity</td></tr><tr><td>JSON</td><td>Structured text data</td></tr><tr><td>AJAX</td><td>Request/update data without a traditional full-page reload</td></tr><tr><td>HTTP 2xx</td><td>Success</td></tr><tr><td>HTTP 4xx</td><td>Client error</td></tr><tr><td>HTTP 5xx</td><td>Server error</td></tr><tr><td>PHP</td><td>Server-side programming</td></tr><tr><td>MySQL</td><td>Relational database system</td></tr></table></div>
+</section>
+</main>
+</div>
+
+<script>
+const layout=document.getElementById('layout');
+document.getElementById('menu').addEventListener('click',()=>layout.classList.toggle('collapsed'));
+document.getElementById('dark').addEventListener('click',()=>document.body.classList.toggle('dark'));
+
+document.querySelectorAll('.groupHead').forEach(b=>b.addEventListener('click',()=>{
+ const g=b.parentElement; g.classList.toggle('open'); b.querySelector('span').textContent=g.classList.contains('open')?'▾':'▸';
+}));
+function go(id){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ const p=document.getElementById(id); if(p){p.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
+ document.querySelectorAll('.items button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));
+ if(innerWidth<901) layout.classList.add('collapsed');
+}
+document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.page)));
+document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',async()=>{
+ const text=b.closest('.codebox').querySelector('pre').innerText;
+ try{await navigator.clipboard.writeText(text);b.textContent='Copied';setTimeout(()=>b.textContent='Copy',1000)}catch(e){b.textContent='Select & copy'}
+}));
+document.getElementById('search').addEventListener('input',e=>{
+ const q=e.target.value.trim().toLowerCase(); if(!q)return;
+ const p=[...document.querySelectorAll('.page')].find(x=>(x.dataset.search+' '+x.innerText).toLowerCase().includes(q));
+ if(p)go(p.id);
+});
+
+const codingTasks=[["1. Basic Page", "Create a complete HTML5 document with a browser title and an H1 heading.", "<!DOCTYPE html>\\n<html>\\n<head><title>Practice Page</title></head>\\n<body><h1>Hello World</h1></body>\\n</html>"], ["2. Formatting", "Display bold, italic, underlined, subscript, and superscript examples.", "<b>Bold</b>\\n<i>Italic</i>\\n<u>Underline</u>\\nH<sub>2</sub>O\\nx<sup>2</sup>"], ["3. Table", "Build a 2-column table with Day and Time headers and one data row.", "<table border=\"1\">\\n<tr><th>Day</th><th>Time</th></tr>\\n<tr><td>Monday</td><td>7:00 PM</td></tr>\\n</table>"], ["4. Image", "Display cat.jpg at width 300 with useful alternative text.", "<img src=\"cat.jpg\" alt=\"A cat\" width=\"300\">"], ["5. Video", "Create a video player for an MP4 file and show playback controls.", "<video width=\"400\" controls>\\n<source src=\"video.mp4\" type=\"video/mp4\">\\n</video>"], ["6. Text Form", "Create required Full Name and Email fields.", "<label for=\"name\">Full Name:</label>\\n<input type=\"text\" id=\"name\" name=\"name\" required>\\n<label for=\"email\">Email:</label>\\n<input type=\"email\" id=\"email\" name=\"email\" required>"], ["7. Number Constraints", "Create an Age number input that accepts values from 1 through 100.", "<input type=\"number\" id=\"age\" name=\"age\" min=\"1\" max=\"100\">"], ["8. Radio Group", "Create two Year Level radio buttons where only one can be selected.", "<input type=\"radio\" id=\"first\" name=\"year\" value=\"1st\">\\n<label for=\"first\">1st Year</label>\\n<input type=\"radio\" id=\"second\" name=\"year\" value=\"2nd\">\\n<label for=\"second\">2nd Year</label>"], ["9. Checkboxes", "Create HTML and CSS skill checkboxes.", "<input type=\"checkbox\" id=\"html\" name=\"skills\" value=\"HTML\">\\n<label for=\"html\">HTML</label>\\n<input type=\"checkbox\" id=\"css\" name=\"skills\" value=\"CSS\">\\n<label for=\"css\">CSS</label>"], ["10. Dropdown", "Create a Course select with BSIT and BSCS choices.", "<select id=\"course\" name=\"course\">\\n<option value=\"BSIT\">BS Information Technology</option>\\n<option value=\"BSCS\">BS Computer Science</option>\\n</select>"], ["11. Multiple Select", "Create a hobbies select that permits multiple selections.", "<select id=\"hobbies\" name=\"hobbies\" multiple>\\n<option value=\"reading\">Reading</option>\\n<option value=\"gaming\">Gaming</option>\\n</select>"], ["12. Textarea", "Create a 4-row, 40-column textarea for a reason.", "<textarea id=\"reason\" name=\"reason\" rows=\"4\" cols=\"40\"></textarea>"], ["13. File Upload", "Create a file chooser labeled Upload Student ID.", "<label for=\"studentfile\">Upload Student ID:</label>\\n<input type=\"file\" id=\"studentfile\" name=\"studentfile\">"], ["14. Submit + Reset", "Add Submit and Reset controls to a form.", "<input type=\"submit\" value=\"Submit\">\\n<input type=\"reset\" value=\"Reset\">"], ["15. Fix the Label", "Fix: <label for=\"email\">Email</label> <input id=\"studentemail\">", "<label for=\"email\">Email</label>\\n<input id=\"email\" name=\"email\">"], ["16. Fix the Table", "Correct the invalid <thread> element in a table header.", "Use <thead> ... </thead>, not <thread>."], ["17. CSS Rule", "Make all paragraphs blue and 18px.", "p {\\n  color: blue;\\n  font-size: 18px;\\n}"], ["18. External CSS", "Link an external file named style.css.", "<link rel=\"stylesheet\" href=\"style.css\">"], ["19. Responsive Rule", "At widths of 600px or less, make .container width 100%.", "@media (max-width: 600px) {\\n  .container { width: 100%; }\\n}"], ["20. JavaScript Click", "Make a button show Hello when clicked.", "const button = document.getElementById(\"helloBtn\");\\nbutton.addEventListener(\"click\", function () {\\n  alert(\"Hello\");\\n});"]];
+const cb=document.getElementById('codingbox');
+codingTasks.forEach(([title,task,solution])=>{
+ const d=document.createElement('div'); d.className='card';
+ const h=document.createElement('h3'); h.textContent=title;
+ const p=document.createElement('p'); p.textContent=task;
+ const btn=document.createElement('button'); btn.textContent='Show Solution'; btn.type='button';
+ const pre=document.createElement('pre'); pre.style.display='none'; pre.textContent=solution;
+ btn.addEventListener('click',()=>{const show=pre.style.display==='none';pre.style.display=show?'block':'none';btn.textContent=show?'Hide Solution':'Show Solution';});
+ d.append(h,p,btn,pre); cb.appendChild(d);
+});
+
+const flashcards=[["What is HTML?", "HyperText Markup Language; it structures webpage content."], ["What does <!DOCTYPE html> declare?", "That the document uses HTML5."], ["What is the role of <html>?", "It is the root element of the HTML document."], ["What belongs in <head>?", "Metadata such as the page title and other document information."], ["What does <title> affect?", "The title shown on the browser tab."], ["What belongs in <body>?", "The main content rendered on the webpage."], ["What is an HTML element?", "A complete HTML unit, commonly including opening tag, content, and closing tag."], ["What is an HTML attribute?", "Extra information or configuration written in an element's opening tag."], ["What does <h1> represent?", "A level-1 heading."], ["What does <p> create?", "A paragraph."], ["What does <br> create?", "A line break."], ["What does <hr> represent?", "A thematic break, commonly rendered as a horizontal rule."], ["What does <b> do?", "Renders text in bold styling."], ["What does <i> do?", "Renders text in italic styling."], ["What does <u> do?", "Renders text with an underline by default."], ["What does <sub> do?", "Creates subscript text, such as the 2 in H₂O."], ["What does <sup> do?", "Creates superscript text, such as the 2 in x²."], ["What does <a> create?", "A hyperlink."], ["What does href specify?", "The destination of a hyperlink."], ["What does <ul> create?", "An unordered list."], ["What does <ol> create?", "An ordered list."], ["What does <li> create?", "A list item."], ["What does <table> create?", "A table."], ["What does <thead> group?", "The header section of a table."], ["What does <tbody> group?", "The body/data section of a table."], ["What does <tr> create?", "A table row."], ["What does <th> create?", "A table header cell."], ["What does <td> create?", "A normal table data cell."], ["What does <img> embed?", "An image."], ["What does src specify?", "The resource location/path to load."], ["Why is alt important on an image?", "It provides a text alternative for the image."], ["What can width control on an image/video?", "Its displayed width."], ["What does <video> create?", "A video player/media element."], ["What does controls do on <video>?", "Displays browser playback controls."], ["What does <source> do inside video?", "Specifies a media resource and can specify its MIME type."], ["What does <form> do?", "Groups controls used to collect user input."], ["What does <label> do?", "Provides a label/caption for a form control."], ["What should label for match?", "The id of the associated form control."], ["What does id do?", "Identifies an element; IDs should be unique in a document."], ["What does name do on a form control?", "Names the field in submitted form data."], ["What does value do?", "Defines the value associated with a control or option."], ["What does placeholder do?", "Displays temporary hint/example text inside a supported control."], ["What does required do?", "Makes a form control mandatory for normal browser form submission."], ["What does input type=text create?", "A single-line general text field."], ["What does input type=email create?", "An email-address input with email-oriented browser validation/behavior."], ["What does input type=password do?", "Creates a field that obscures typed characters."], ["What does input type=number create?", "A numeric input."], ["What do min and max do?", "Set lower and upper constraints for applicable controls."], ["What does input type=tel create?", "A telephone-number input."], ["What does input type=date create?", "A date input/date-picker interface where supported."], ["What does input type=radio create?", "A radio button used for one choice within a named group."], ["Why do related radio buttons share a name?", "So they behave as one single-choice group."], ["What does input type=checkbox create?", "An independently selectable checkbox."], ["Radio vs checkbox?", "Radio is for one choice in a group; checkboxes allow independent selections."], ["What does <select> create?", "A selection control/dropdown or list box."], ["What does <option> create?", "One selectable choice inside a select."], ["What does multiple do on select?", "Allows more than one option to be selected."], ["What does <textarea> create?", "A multi-line text input."], ["What do rows and cols describe on textarea?", "Its suggested visible row and column dimensions."], ["What does input type=file do?", "Lets the user choose a file."], ["What does input type=submit do?", "Creates a control that attempts to submit the form."], ["What does input type=reset do?", "Restores form controls to their initial values."], ["What is wrong with <thread> in a table header?", "The intended HTML table-header element is <thead>."], ["Why must a media filename be correct?", "The browser uses the path in src to locate the resource."], ["What is a relative file path?", "A resource path interpreted relative to the current document/location."], ["What does CSS stand for?", "Cascading Style Sheets."], ["What is CSS mainly for?", "Presentation and styling of documents."], ["What is a CSS selector?", "The part of a rule that targets elements."], ["What is a CSS property?", "The style characteristic being set, such as color."], ["What is a CSS value?", "The setting assigned to a property, such as red."], ["What does color control?", "Text color."], ["What does background-color control?", "An element's background color."], ["What does font-size control?", "Text size."], ["Margin vs padding?", "Margin is outside the border; padding is inside the border."], ["What does border control?", "The border around an element."], ["What does width control in CSS?", "An element's width."], ["What does display affect?", "How an element participates in layout/display."], ["What is inline CSS?", "CSS written in an element's style attribute."], ["What is internal CSS?", "CSS rules placed in a <style> element in the HTML document."], ["What is external CSS?", "CSS stored in a separate file and linked to the HTML."], ["What does responsive design mean?", "Design that adapts to different screen/device sizes."], ["Why use the viewport meta tag?", "To help pages size and scale appropriately on mobile devices."], ["What is a media query?", "A CSS conditional rule that applies styles under specified media conditions."], ["What is JavaScript mainly used for in webpages?", "Behavior, logic, and interactivity."], ["What does const declare in JavaScript?", "A block-scoped binding that cannot be reassigned."], ["What does let declare in JavaScript?", "A block-scoped variable binding that can be reassigned."], ["What is a function?", "A reusable block of executable code."], ["What is an event?", "An occurrence such as a click that code can respond to."], ["What does getElementById do?", "Returns the element with the specified id, if found."], ["What does addEventListener do?", "Registers a function to run when a specified event occurs."], ["What is JSON?", "JavaScript Object Notation, a text format for structured data."], ["What is a JSON object?", "A collection of key/value pairs enclosed in braces."], ["What is a JSON array?", "An ordered list of values enclosed in brackets."], ["What quotation marks are used for JSON strings?", "Double quotation marks."], ["What is AJAX?", "A web-development technique for asynchronous data requests and page updates without a traditional full-page reload."], ["Does AJAX require XML?", "No. Despite the historical name, formats such as JSON are commonly used."], ["What is HTTP?", "Hypertext Transfer Protocol, used for web request/response communication."], ["What do 2xx HTTP statuses indicate?", "Successful responses."], ["What do 3xx HTTP statuses indicate?", "Redirection."], ["What do 4xx HTTP statuses indicate?", "Client-error responses."], ["What do 5xx HTTP statuses indicate?", "Server-error responses."], ["What is HTTP 200?", "OK."], ["What is HTTP 301?", "Moved Permanently."], ["What is HTTP 400?", "Bad Request."], ["What is HTTP 401?", "Unauthorized."], ["What is HTTP 403?", "Forbidden."], ["What is HTTP 404?", "Not Found."], ["What is HTTP 500?", "Internal Server Error."], ["What is a web client?", "A program/device, commonly a browser, that requests web resources."], ["What is a web server?", "A system that responds to web requests and serves resources/services."], ["What is frontend development?", "Development of the user-facing portion of a web application."], ["What is backend development?", "Server-side application logic, data access, and related services."], ["What is confidentiality?", "Protecting information from unauthorized disclosure."], ["What is integrity in security?", "Protecting information from unauthorized alteration."], ["What is availability?", "Keeping systems/data accessible when needed."], ["What is encryption?", "Transforming data using a cryptographic key so authorized parties can recover it."], ["What is hashing?", "A one-way transformation that produces a fixed-size digest."], ["What is HTTPS?", "HTTP carried over TLS to provide encrypted/authenticated transport."], ["What is PHP?", "A programming language commonly used for server-side web development."], ["What is MySQL?", "A relational database management system."], ["What does echo do in PHP?", "Outputs text/data."], ["How do PHP variables begin?", "With a dollar sign, such as $name."], ["What does session_start() do?", "Starts or resumes a PHP session."], ["What is $_SESSION?", "A PHP superglobal array used to store session data."]];
+const fg=document.getElementById('flashgrid');
+flashcards.forEach(([q,a])=>{
+  const d=document.createElement('div');
+  d.className='flash';
+
+  const question=document.createElement('div');
+  question.className='question';
+
+  const questionText=document.createElement('b');
+  questionText.textContent=q;
+  question.appendChild(questionText);
+
+  const answer=document.createElement('div');
+  answer.className='answer';
+
+  const answerLabel=document.createElement('b');
+  answerLabel.textContent='Answer';
+
+  const answerText=document.createElement('p');
+  answerText.textContent=a;
+
+  answer.appendChild(answerLabel);
+  answer.appendChild(answerText);
+  d.appendChild(question);
+  d.appendChild(answer);
+
+  d.addEventListener('click',()=>d.classList.toggle('open'));
+  fg.appendChild(d);
+});
+
+const qs=[["Which declaration identifies an HTML5 document?", ["<!DOCTYPE html>", "<html5>", "<doctype>", "<head>"], 0], ["Which element contains visible page content?", ["<head>", "<body>", "<title>", "<meta>"], 1], ["Which element sets the browser-tab title?", ["<title>", "<h1>", "<header>", "<caption>"], 0], ["Which tag creates the highest-level heading?", ["<h1>", "<h6>", "<head>", "<title>"], 0], ["Which tag creates a paragraph?", ["<p>", "<br>", "<para>", "<text>"], 0], ["Which tag inserts a line break?", ["<br>", "<hr>", "<p>", "<lb>"], 0], ["Which tag creates subscript text?", ["<sub>", "<sup>", "<small>", "<down>"], 0], ["Which tag creates superscript text?", ["<sup>", "<sub>", "<up>", "<strong>"], 0], ["Which element creates a hyperlink?", ["<a>", "<link>", "<href>", "<url>"], 0], ["Which attribute specifies a hyperlink destination?", ["href", "src", "alt", "for"], 0], ["Which tag creates an unordered list?", ["<ul>", "<ol>", "<li>", "<list>"], 0], ["Which tag creates a list item?", ["<li>", "<ul>", "<ol>", "<item>"], 0], ["Which tag creates a table row?", ["<tr>", "<td>", "<th>", "<table>"], 0], ["Which tag creates a table header cell?", ["<th>", "<td>", "<tr>", "<thead>"], 0], ["Which tag creates a normal table data cell?", ["<td>", "<th>", "<tr>", "<tbody>"], 0], ["Which element groups a table's header rows?", ["<thead>", "<thread>", "<tbody>", "<header>"], 0], ["Which element groups a table's body rows?", ["<tbody>", "<body>", "<tdata>", "<thead>"], 0], ["Which element embeds an image?", ["<img>", "<image>", "<picturefile>", "<src>"], 0], ["Which image attribute points to the image file?", ["src", "alt", "href", "name"], 0], ["Which image attribute provides alternative text?", ["alt", "src", "title", "value"], 0], ["Which element creates a video player?", ["<video>", "<media>", "<movie>", "<source>"], 0], ["Which video attribute displays playback controls?", ["controls", "playback", "buttons", "required"], 0], ["Which element groups form controls?", ["<form>", "<input>", "<fieldsetonly>", "<label>"], 0], ["Which element labels a form control?", ["<label>", "<name>", "<caption>", "<legendonly>"], 0], ["A label's for value should match which control attribute?", ["id", "name", "value", "type"], 0], ["Which attribute should be unique within one HTML document?", ["id", "name", "value", "placeholder"], 0], ["Which attribute names submitted form data?", ["name", "id", "for", "placeholder"], 0], ["Which attribute shows hint text inside an input?", ["placeholder", "value", "alt", "hint"], 0], ["Which attribute makes a field mandatory for normal submission?", ["required", "needed", "mandatory", "validate"], 0], ["Which input type is best for ordinary single-line text?", ["text", "textarea", "string", "plain"], 0], ["Which input type is intended for email addresses?", ["email", "mail", "textmail", "address"], 0], ["Which input type obscures typed characters?", ["password", "hidden", "secret", "mask"], 0], ["Which input type is intended for numeric entry?", ["number", "integer", "numeric", "digit"], 0], ["Which attributes can constrain a number input's lower and upper bounds?", ["min and max", "low and high", "start and end", "from and to"], 0], ["Which input type is intended for telephone entry?", ["tel", "phone", "telephone", "mobile"], 0], ["Which input type creates a date control?", ["date", "calendar", "day", "datetimeonly"], 0], ["Which input type is used for one choice in a named group?", ["radio", "checkbox", "select", "choice"], 0], ["Which input type supports independent on/off selections?", ["checkbox", "radio", "option", "toggleonly"], 0], ["Why do related radio buttons share the same name?", ["To form one selection group", "To share one id", "To make all selected", "To create labels"], 0], ["Which element contains dropdown choices?", ["<select>", "<option>", "<input>", "<list>"], 0], ["Which element represents one choice inside a select?", ["<option>", "<select>", "<choice>", "<item>"], 0], ["Which attribute allows several options in a select to be chosen?", ["multiple", "many", "several", "checked"], 0], ["Which element is used for multi-line text entry?", ["<textarea>", "<input>", "<text>", "<paragraph>"], 0], ["Which input type lets a user choose a file?", ["file", "upload", "document", "attachment"], 0], ["Which input type restores form controls to initial values?", ["reset", "clear", "undo", "restart"], 0], ["What does CSS primarily control?", ["Presentation and styling", "Database storage", "HTTP routing", "Server sessions"], 0], ["In p { color: blue; }, what is p?", ["Selector", "Property", "Value", "Attribute"], 0], ["In p { color: blue; }, what is color?", ["Property", "Selector", "Value", "Element"], 0], ["In p { color: blue; }, what is blue?", ["Value", "Selector", "Property", "Tag"], 0], ["Which property controls text color?", ["color", "font-color", "text-color", "foreground"], 0], ["Which property controls background color?", ["background-color", "color-background", "bgcolor-css", "fill-page"], 0], ["Which property controls text size?", ["font-size", "text-size", "size", "font-scale"], 0], ["Which term describes space outside an element's border?", ["margin", "padding", "spacing-inside", "gap-text"], 0], ["Which term describes space between content and its border?", ["padding", "margin", "outline", "external-space"], 0], ["Which property can define an element border?", ["border", "outline-only", "edge", "stroke-html"], 0], ["Where is inline CSS written?", ["In an element's style attribute", "Only in style.css", "Inside <script>", "Inside href"], 0], ["Which element is used for internal CSS rules?", ["<style>", "<css>", "<script>", "<design>"], 0], ["Which element commonly links an external stylesheet?", ["<link>", "<style>", "<a>", "<css>"], 0], ["What is responsive web design?", ["Design that adapts to screen sizes", "Design that only works on phones", "Server-side rendering only", "A database design method"], 0], ["What CSS feature applies rules conditionally based on media characteristics?", ["Media query", "HTML query", "AJAX request", "PHP session"], 0], ["What is JavaScript primarily used for on webpages?", ["Behavior and interactivity", "HTML structure only", "Database tables only", "CSS colors only"], 0], ["Which keyword declares a block-scoped binding that cannot be reassigned?", ["const", "let", "varonly", "fixed"], 0], ["Which keyword declares a block-scoped variable that can be reassigned?", ["let", "const", "static-html", "change"], 0], ["What is a JavaScript function?", ["A reusable block of executable code", "A CSS selector", "An HTTP status", "A database row"], 0], ["What is a click in browser scripting?", ["An event", "A property value", "A JSON type", "A PHP session"], 0], ["What does document.getElementById('x') look for?", ["An element whose id is x", "An element whose name is x only", "A CSS file named x", "A server named x"], 0], ["What does addEventListener register?", ["A handler for an event", "A CSS stylesheet", "An HTML doctype", "A database"], 0], ["Which technology works with HTML and CSS to add client-side logic?", ["JavaScript", "MySQL", "HTTP status codes", "PNG"], 0], ["Which browser event commonly occurs when a button is pressed?", ["click", "style", "json", "doctype"], 0], ["Where is JavaScript commonly placed in HTML?", ["Inside a <script> element or external JS file", "Inside <style> only", "Inside <title> only", "Inside <thead> only"], 0], ["What does JSON stand for?", ["JavaScript Object Notation", "Java Source Object Network", "Joined Script Output Name", "Java Standard Object Node"], 0], ["Which delimiters surround a JSON object?", ["{ }", "[ ]", "( )", "< >"], 0], ["Which delimiters surround a JSON array?", ["[ ]", "{ }", "( )", "< >"], 0], ["Which quotation marks are required for JSON string keys?", ["Double quotes", "Single quotes only", "Backticks", "No quotes"], 0], ["What does JSON commonly represent?", ["Structured data", "CSS presentation rules", "HTML layout tags", "Binary images only"], 0], ["What is AJAX used for conceptually?", ["Asynchronous web data requests and updates", "Creating CSS borders", "Defining HTML headings", "Starting PHP sessions only"], 0], ["Does modern AJAX require XML as the data format?", ["No", "Yes, always", "Only for CSS", "Only for images"], 0], ["Which API is commonly used in modern JavaScript to make web requests?", ["fetch", "font-size", "DOCTYPE", "session_start"], 0], ["After fetch(), what does response.json() commonly do?", ["Parses a JSON response body", "Creates a CSS file", "Starts a PHP session", "Changes an HTTP status"], 0], ["What user-visible benefit can AJAX-style updates provide?", ["Updating data without a traditional full-page reload", "Making HTML tags optional", "Removing the need for servers", "Replacing CSS entirely"], 0], ["What does HTTP 200 mean?", ["OK", "Not Found", "Forbidden", "Internal Server Error"], 0], ["What does HTTP 404 mean?", ["Not Found", "OK", "Moved Permanently", "Unauthorized"], 0], ["What does HTTP 500 mean?", ["Internal Server Error", "Bad Request", "OK", "Forbidden"], 0], ["Which HTTP class indicates success?", ["2xx", "3xx", "4xx", "5xx"], 0], ["Which HTTP class indicates redirection?", ["3xx", "2xx", "4xx", "5xx"], 0], ["Which HTTP class indicates client errors?", ["4xx", "2xx", "3xx", "5xx"], 0], ["Which HTTP class indicates server errors?", ["5xx", "2xx", "3xx", "4xx"], 0], ["What does HTTP 301 mean?", ["Moved Permanently", "OK", "Not Found", "Bad Request"], 0], ["What is a web client commonly?", ["A browser requesting resources", "A CSS property", "A database row", "An HTML tag"], 0], ["What does a web server do?", ["Responds to requests and serves resources/services", "Only displays CSS locally", "Only stores images with no requests", "Replaces HTML tags"], 0], ["Which security goal protects against unauthorized disclosure?", ["Confidentiality", "Integrity", "Availability", "Styling"], 0], ["Which security goal protects against unauthorized modification?", ["Integrity", "Confidentiality", "Availability", "Responsiveness"], 0], ["Which security goal concerns access when needed?", ["Availability", "Integrity", "Confidentiality", "Markup"], 0], ["What does encryption use to transform data for authorized recovery?", ["Cryptographic keys", "HTML tags", "CSS selectors", "HTTP 404"], 0], ["What does hashing generally produce?", ["A fixed-size digest", "A reversible plaintext copy", "A CSS rule", "A browser tab"], 0], ["What is PHP commonly used for?", ["Server-side web programming", "CSS styling only", "Image compression only", "HTML headings only"], 0], ["What is MySQL?", ["A relational database management system", "A CSS framework", "An HTML element", "An HTTP status"], 0], ["How does a PHP variable name begin?", ["$", "@", "#", "%"], 0], ["What does echo do in PHP?", ["Outputs data/text", "Starts CSS", "Creates a database automatically", "Adds an HTML doctype"], 0], ["What function starts or resumes a PHP session?", ["session_start()", "session_begin()", "start_php()", "http_session()"], 0]];
+const qb=document.getElementById('quizbox');
+function renderQuiz(){
+ qb.innerHTML='';
+ qs.forEach((x,i)=>{const d=document.createElement('div');d.className='quizItem';d.innerHTML=`<b>${i+1}. ${x[0]}</b>`;x[1].forEach((o,j)=>{const lab=document.createElement('label');lab.innerHTML=`<input type="radio" name="q${i}" value="${j}"> ${o.replaceAll('<','&lt;').replaceAll('>','&gt;')}`;d.appendChild(lab)});qb.appendChild(d)});
+ document.getElementById('result').textContent='';
+}
+renderQuiz();
+document.getElementById('grade').addEventListener('click',()=>{
+ let s=0;qs.forEach((q,i)=>{const a=document.querySelector(`input[name="q${i}"]:checked`);if(a&&+a.value===q[2])s++});
+ document.getElementById('result').textContent=`Score: ${s}/100 (${Math.round(s)}%) ${s===100?'— Perfect score!':'— Review the missed concepts and try again.'}`;
+});
+document.getElementById('reset').addEventListener('click',renderQuiz);
+</script>
+</body>
+</html>
